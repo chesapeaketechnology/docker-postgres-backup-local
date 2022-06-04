@@ -1,12 +1,14 @@
 ARG BASETAG=alpine
-FROM postgres:$BASETAG
+FROM registry1.dso.mil/ironbank/opensource/postgres/postgresql:13.6
 
 ARG GOCRONVER=v0.0.10
 ARG TARGETOS
 ARG TARGETARCH
+
+USER root
 RUN set -x \
-	&& apk update && apk add ca-certificates curl \
-	&& curl -L https://github.com/prodrigestivill/go-cron/releases/download/$GOCRONVER/go-cron-$TARGETOS-$TARGETARCH-static.gz | zcat > /usr/local/bin/go-cron \
+	&& yum update && yum install -y ca-certificates curl \
+	&& curl -L https://github.com/prodrigestivill/go-cron/releases/download/v0.0.10/go-cron-linux-amd64.gz | zcat > /usr/local/bin/go-cron \
 	&& chmod a+x /usr/local/bin/go-cron
 
 ENV POSTGRES_DB="**None**" \
@@ -30,6 +32,9 @@ ENV POSTGRES_DB="**None**" \
     HEALTHCHECK_PORT=8080
 
 COPY backup.sh /backup.sh
+
+RUN usermod -a -G root postgres
+USER postgres:0
 
 VOLUME /backups
 

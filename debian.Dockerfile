@@ -1,5 +1,6 @@
 ARG BASETAG=latest
-FROM postgres:$BASETAG
+FROM registry1.dso.mil/ironbank/opensource/postgres/postgresql:13.6
+
 
 ARG GOCRONVER=v0.0.10
 ARG TARGETOS
